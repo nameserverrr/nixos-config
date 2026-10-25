@@ -47,8 +47,8 @@ CALLUM_PASSWORD="$(prompt_nonempty 'callum Password: ' secret)"
 read -rp "Config (default: pc): " config
 config="${config:-pc}"
 
-read -rp "Branch (default: master): " branch
-branch="${branch:-master}"
+read -rp "Branch (default: main): " branch
+branch="${branch:-main}"
 
 #-------------------------
 # Disk Selection
