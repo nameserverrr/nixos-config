@@ -19,13 +19,17 @@ prompt_nonempty() {
     while :; do
         if $secret; then
             read -rsp "$prompt" var
-            echo
+            printf '\n' >&2
         else
             read -rp "$prompt" var
         fi
 
-        [[ -n "$var" ]] && { echo "$var"; return; }
-        echo "Input cannot be empty, try again."
+        if [[ -n "$var" ]]; then
+            printf '%s\n' "$var"
+            return
+        fi
+
+        printf '%s\n' "Input cannot be empty, try again." >&2
     done
 }
 
@@ -37,7 +41,6 @@ require_root "$@"
 #-------------------------
 # User Input
 #-------------------------
-hostname="$(prompt_nonempty 'Hostname: ')"
 ROOT_PASSWORD="$(prompt_nonempty 'Root Password: ' secret)"
 CALLUM_PASSWORD="$(prompt_nonempty 'callum Password: ' secret)"
 
@@ -108,8 +111,8 @@ git clone --depth 1 --branch "$branch" \
 
 nixos-install --flake "/mnt/etc/nixos#$config" --no-root-password
 
-echo "root:$ROOT_PASSWORD" | nixos-enter -c "chpasswd"
-echo "callum:$CALLUM_PASSWORD" | nixos-enter -c "chpasswd"
+printf 'root:%s\n' "$ROOT_PASSWORD" | nixos-enter -c 'chpasswd'
+printf 'callum:%s\n' "$CALLUM_PASSWORD" | nixos-enter -c 'chpasswd'
 
 #-------------------------
 # Reboot
